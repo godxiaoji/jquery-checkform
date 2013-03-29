@@ -13,6 +13,20 @@
         <p><label for="username">Username: </label><input type="text" name="username" id="username"> <span></span></p>
         <p><label for="email">Email: </label><input type="text" name="email" id="email"> <span></span></p>
         <p><label for="password">Password: </label><input type="password" name="password" id="password"> <span></span></p>
+        <p><label for="sex1">Sex: </label><label for="sex1"><input type="radio" name="sex" value="1" id="sex1">Boy</label>
+            <label for="sex2"><input type="radio" name="sex" value="2" id="sex2">Girl</label>
+            <label for="sex3"><input type="radio" name="sex" value="3" id="sex3">Other</label>
+            <span id="sexTips"></span></p>
+        <p><label for="hobbies1">Hobbies: </label><label for="hobbies1"><input type="checkbox" name="hobbies[]" value="1" id="hobbies1">Play</label>
+            <label for="hobbies2"><input type="checkbox" name="hobbies[]" value="2" id="hobbies2">Eat</label>
+            <label for="hobbies3"><input type="checkbox" name="hobbies[]" value="3" id="hobbies3">Sleep</label>
+            <span id="hobbiesTips"></span></p>
+        <p><label for="profession">Profession: </label><select name="profession" id="profession">
+        	<option value="">Please select</option>
+        	<option value="1">Student</option>
+        	<option value="2">Teacher</option>
+        	<option value="3">Worker</option>
+        </select> <span></span></p>
         <p><input type="submit" value="Submit"></p>
     </form>
     
@@ -21,8 +35,11 @@
     <script type="text/javascript">
         $.checkFormSetup({e: 'Please input the text.'});
         $("#form").checkForm({
-            '#username': {w: 'Input the wrong username.', r: /^\w{5,16}$/},
-            '#email': {e: 'Please input the email.', w: 'Input the wrong email.', r: 'email', t: 'next'}
+            '#username': {w: 'Input the wrong username.', r: /^[a-zA-Z]\w{4,15}$/},
+            '#email': {e: 'Please input the email.', w: 'Input the wrong email.', r: 'email', t: 'next'},
+            'input:radio': {e: 'Please select the sex.', t: '#sexTips', type: 'radio'},
+            'input:checkbox': {e: 'Please select the hobbies.', w: 'Select the wrong hobbies.', r: /^1$/, t: '#hobbiesTips', type: 'checkbox'},
+            'select': {e: 'Please select the profession.', type: 'select'},
         });
     </script>
 </body>

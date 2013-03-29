@@ -2,7 +2,7 @@
  * jQuery checkForm
  * @Author  Travis(LinYongji)
  * @Contact http://travisup.com/
- * @Version 1.0.0
+ * @Version 1.0.1
  */
 (function($) {
     var reg = {
@@ -22,27 +22,30 @@
             w: '',
             r: '',
             t: 'next',
+            type: 'text',
             cpass: 'check-pass',
             cerror: 'check-error'
         };
     
-    function blur() {
-        var $tips,
-            $elem = $(this),
-            o = $elem.data('checkform'),
-            val = $elem.val();
-        
-        if(o.t == 'next') {
-            $tips = $(this).next();
-        } else if(o.t == 'prev') {
-            $tips = $(this).prev();
+    function tips($elem, t) {
+        var $tips;
+        if(t == 'next') {
+            $tips = $elem.eq(-1).next();
+        } else if(t == 'prev') {
+            $tips = $elem.eq(0).prev();
         } else {
-            $tips = $(o.t);
+            $tips = $(t);
         }
-        
-        $tips.removeClass(def.cpass).removeClass(def.cerror);
-        
-        if(o.e && val == '') {
+        return $tips.removeClass(def.cpass).removeClass(def.cerror);
+    }
+    
+    function text() {
+        var $elem = $(this).eq(0),
+            o = $elem.data('checkform'),
+            val = $elem.val(),
+            $tips = tips($elem, o.t);
+
+        if(o.e && !val) {
             $tips.addClass(def.cerror).text(o.e);
             return false;
         }
@@ -56,6 +59,32 @@
         return true;
     }
     
+    function checked() {
+        var $elem = this.filter(':checked'),
+            o = this.eq(0).data('checkform'),
+            val,
+            i = 0,
+            $tips = tips($elem, o.t);
+
+        if(o.e && $elem.length === 0) {
+            $tips.addClass(def.cerror).text(o.e);
+            return false;
+        }
+        
+        if(o.w && o.r) {
+            for(; i < $elem.length; i++) {
+                val = $elem.eq(i).val();
+                if(val && !o.r.test(val)) {
+                    $tips.addClass(def.cerror).text(o.w);
+                    return false;
+                }
+            }
+        }
+        
+        $tips.addClass(def.cpass).text('');
+        return true;
+    }
+    
     function submit(e) {
         var i,
             $elem,
@@ -63,10 +92,13 @@
             sign = 0;
         for(i in o) {
             $elem = $(i);
-            if($elem[0]) {
-                !blur.call($elem[0]) && sign++;
+            if(o[i].type == 'text' || o[i].type == 'select') {
+                $elem[0] && !text.call($elem[0]) && sign++;
+            } else if(o[i].type == 'radio' || o[i].type == 'checkbox') {
+                $elem[0] && !checked.call($elem) && sign++;
             }
         }
+        return false;
         return sign > 0 ? false : true;
     }
     
@@ -81,18 +113,24 @@
     }
     
     function init(options) {
-        var i, o;
+        var i, o, $elem;
 
         if(typeof options === 'undefined') {
             return;
         }
         for(i in options) {
+            $elem = $(i);
             o = options[i];
             o.r = reg[o.r] || o.r || def.r;
             o.w = o.w || def.w;
             o.e = o.e || def.e;
             o.t = o.t || def.t;
-            $(i).eq(0).data('checkform', o).bind('blur', blur);
+            o.type = o.type || def.type;
+            
+            $elem.eq(0).data('checkform', o)
+            if(o.type == 'text') {
+                $elem.eq(0).bind('blur', text);
+            }
         }
         
         this.eq(0).bind('submit', options, submit);

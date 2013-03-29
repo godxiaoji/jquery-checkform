@@ -3,16 +3,19 @@
 基于jQuery的表单校验插件
 
 ### Usage
-    
+
     <script type="text/javascript">
         $.checkFormSetup({e: 'Please input the text.'});
         
         $("#form").checkForm({
-            '#username': {w: 'Input the wrong username.', r: /^\w{5,16}$/},
-            '#email': {e: 'Please input the email.', w: 'Input the wrong email.', r: 'email', t: 'next'}
+            '#username': {w: 'Input the wrong username.', r: /^[a-zA-Z]\w{4,15}$/},
+            '#email': {e: 'Please input the email.', w: 'Input the wrong email.', r: 'email', t: 'next'},
+            'input:radio': {e: 'Please select the sex.', t: '#sexTips', type: 'radio'},
+            'input:checkbox': {e: 'Please select the hobbies.', w: 'Select the wrong hobbies.', r: /^1$/, t: '#hobbiesTips', type: 'checkbox'},
+            'select': {e: 'Please select the profession.', type: 'select'},
         });
     </script>
-    
+
 ### Regular
 
 插件内置了一些常用的正则表达式。
@@ -39,6 +42,7 @@
 * `w`: 输入值错误提示语
 * `r`: 输入值校验正则表达式
 * `t`: 提示节点选择符（可写`next`，`prev`获取输入元素的相邻节点或者通过$(seletor)获取节点，默认：`next`）
+* `type`: 校验通过时提示节点的类名（可选`text`，`select`，`radio`，`checkbox`，默认：`text`）
 * `cpass`: 校验通过时提示节点的类名（默认：`check-pass`）
 * `cerror`: 校验失败时提示节点的类名（默认：`check-error`）
 
