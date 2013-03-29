@@ -47,7 +47,7 @@
             return false;
         }
         
-        if(o.w && o.r && !o.r.test(val)) {
+        if(val && o.w && o.r && !o.r.test(val)) {
             $tips.addClass(def.cerror).text(o.w);
             return false;
         }
